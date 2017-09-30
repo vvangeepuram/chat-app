@@ -7,7 +7,8 @@
     "react-dom": "^16.0.0",
     "react-scripts": "1.0.14",
     "react-bootstrap": "^0.31.3",
-    "react-center": "^1.1.1"
+    "react-center": "^1.1.1",
+    "react-router-dom": "^4.2.2"
 
   },
   "scripts": {

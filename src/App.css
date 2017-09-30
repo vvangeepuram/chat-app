@@ -32,6 +32,10 @@ form {
   margin-top: 15px;
 }
 
+#name {
+  margin-top: 15px;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
