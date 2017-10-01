@@ -1,7 +1,12 @@
 import React, {Component} from 'react';
 import './App.css';
+import './Chat.css';
 import Header from "./Header";
-import {FormControl, FormGroup, Button} from 'react-bootstrap';
+import {Form, FormControl, FormGroup, Button} from 'react-bootstrap';
+import {Redirect} from 'react-router-dom';
+import './Login';
+
+var firebase = require('firebase');
 
 
 class ChatRoom extends Component {
@@ -11,16 +16,7 @@ class ChatRoom extends Component {
 
         this.state = {
             newMsg: "",
-            messages: [
-                  {
-                      name: "Test",
-                      body: "Test body"
-                  },
-                  {
-                      name: "Test2",
-                      body: "Test body 2"
-                  }
-            ]
+            messages: []
         };
 
     }
@@ -30,11 +26,16 @@ class ChatRoom extends Component {
     }
 
     onSendHandler(e) {
+        if (!this.state.newMsg) {
+            return;
+        }
         var newMessage = {
           name: "vidya",
-          body: this.state.newMessage
+          body: this.state.newMsg
         };
         this.state.messages.push(newMessage);
+        this.forceUpdate();
+        this.setState({"newMsg": ""});
     }
 
 
@@ -44,11 +45,11 @@ class ChatRoom extends Component {
                 <Header/>
                 <div class="container">
                     <div class="row">
-                        <div class="col-md-5">
+                        <div>
                             <div class="panel panel-primary">
                                 <div class="panel-heading">
                                     <span class="glyphicon glyphicon-comment"></span> Chat
-                                    <div class="btn-group pull-right">
+                                    {/*<div class="btn-group pull-right">
                                         <button type="button" class="btn btn-default btn-xs dropdown-toggle"
                                                 data-toggle="dropdown">
                                             <span class="glyphicon glyphicon-chevron-down"></span>
@@ -71,7 +72,7 @@ class ChatRoom extends Component {
                                                 class="glyphicon glyphicon-off"></span>
                                                 Sign Out</a></li>
                                         </ul>
-                                    </div>
+                                    </div>*/}
                                 </div>
                                 <div class="panel-body">
                                     <ul class="chat">
@@ -98,28 +99,23 @@ class ChatRoom extends Component {
                                     </ul>
                                 </div>
                                 <div class="panel-footer">
-                                    <div class="input-group">
-                                        <form>
-                                            <FormGroup>
+                                    <div>
+                                        <Form inline>
                                                 <FormControl
                                                     id="btn-input"
                                                     name="newMsg"
                                                     type="text"
-                                                    class="form-control input-sm"
                                                     placeholder="Type your message here..."
                                                     onChange={this.handleChange.bind(this)}
                                                     value={this.state.newMsg}>
                                                 </FormControl>
-                                                <span class="input-group-btn">
                                                     <Button
-                                                        class="btn btn-warning btn-sm"
+                                                        bsStyle="success"
                                                         onClick={this.onSendHandler.bind(this)}
                                                         id="btn-chat">Send
                                                     </Button>
-                                                </span>
 
-                                            </FormGroup>
-                                        </form>
+                                        </Form>
                                     </div>
                                 </div>
                             </div>

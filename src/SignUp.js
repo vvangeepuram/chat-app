@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import Header from "./Header";
 import {FormControl, FormGroup, Button} from 'react-bootstrap';
+import {Redirect} from 'react-router-dom';
 
 
 class SignUp extends Component {
@@ -11,7 +12,8 @@ class SignUp extends Component {
             name: '',
             email: '',
             password: '',
-            confirmPassword: ''
+            confirmPassword: '',
+            redirectToLoginPage: false,
         }
         this.handleChange = this.handleChange.bind(this);
     }
@@ -53,7 +55,7 @@ class SignUp extends Component {
             }).then(res => {
                 res.json().then(resJson => {
                     if (resJson.success) {
-                        alert("success");
+                        this.setState({redirectToLoginPage : true});
                     } else {
                         alert(resJson.message);
                     }
@@ -129,6 +131,7 @@ class SignUp extends Component {
                     </FormGroup>
                     <p> Already have an account? <Link to="/">Login</Link></p>
                 </form>
+                {this.state.redirectToLoginPage && <Redirect to="/"/>}
             </div>
 
         )

@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom';
 import './App.css';
 import './Header.js';
 import Header from "./Header";
+import {Redirect} from 'react-router-dom';
 var firebase = require("firebase");
 
 class Login extends Component {
@@ -11,7 +12,8 @@ class Login extends Component {
         super(props);
         this.state = {
             email: '',
-            password: ''
+            password: '',
+            redirectToChatRoom: false,
         }
         this.handleChange = this.handleChange.bind(this);
     }
@@ -31,21 +33,11 @@ class Login extends Component {
     }
 
     onSubmitHandler(e) {
-        var LoginUser = function(email, password, callback) {
-
-            firebase.auth().signInWithEmailAndPassword(email, password).then(user => {
-               /*this.context.user = firebase.auth().currentUser{
-                  this.context.email = this.state.email;
-                  this.context.password = this.state.password;
-                   //send them to chat
-                   <ChatRoom/>
-
-                }*/
-            }, err => {
-                alert ("Please try agin");
-                // Show the login page again
-            });
-        }
+        firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then(user => {
+            this.setState({redirectToChatRoom : true});
+        }, err => {
+            alert ("Login failed. Please try agin");
+        });
     }
 
 
@@ -83,6 +75,8 @@ class Login extends Component {
                     </FormGroup>
                     <p>New User? <Link to="/signup"> Signup</Link></p>
                 </form>
+                {this.state.redirectToChatRoom && <Redirect to="/chatroom"/>}
+
             </div>
         );
     }
