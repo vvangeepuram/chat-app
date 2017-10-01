@@ -40,6 +40,35 @@ class SignUp extends Component {
         this.setState({[e.target.name]: e.target.value});
     }
 
+    onSubmitHandler(e) {
+        if (this.getNameValidationState() === "success" && this.getPasswordValidationState() === "success" &&
+                this.getEmailValidationState() === "success" && this.getConfirmPasswordValidationState() === "success") {
+            fetch('/createUser', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json'
+                },
+                body: `name=${this.state.name}&email=${this.state.email}&password=${this.state.password}`
+            }).then(res => {
+                res.json().then(resJson => {
+                    if (resJson.success) {
+                        alert("success");
+                    } else {
+                        alert(resJson.message);
+                    }
+                }, err => {
+                    alert("error occurred");
+                });
+            }, err => {
+               alert("error occured");
+               console.log(err);
+            });
+
+        }
+    }
+
+
 
 
     render() {
@@ -96,7 +125,7 @@ class SignUp extends Component {
                         </FormControl>
                     </FormGroup>
                     <FormGroup>
-                        <Button bsStyle="success" bsSize="large">Signup</Button>
+                        <Button bsStyle="success" onClick={this.onSubmitHandler.bind(this)} bsSize="large">Signup</Button>
                     </FormGroup>
                     <p> Already have an account? <Link to="/">Login</Link></p>
                 </form>
