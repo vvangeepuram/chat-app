@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom';
 import './App.css';
 import './Header.js';
 import Header from "./Header";
+var firebase = require("firebase");
 
 class Login extends Component {
     constructor(props) {
@@ -27,6 +28,24 @@ class Login extends Component {
 
     handleChange(e) {
         this.setState({[e.target.name]: e.target.value});
+    }
+
+    onSubmitHandler(e) {
+        var LoginUser = function(email, password, callback) {
+
+            firebase.auth().signInWithEmailAndPassword(email, password).then(user => {
+               /*this.context.user = firebase.auth().currentUser{
+                  this.context.email = this.state.email;
+                  this.context.password = this.state.password;
+                   //send them to chat
+                   <ChatRoom/>
+
+                }*/
+            }, err => {
+                alert ("Please try agin");
+                // Show the login page again
+            });
+        }
     }
 
 
@@ -60,7 +79,7 @@ class Login extends Component {
                         </FormControl>
                     </FormGroup>
                     <FormGroup>
-                        <Button bsStyle="success" bsSize="large">Login</Button>
+                        <Button bsStyle="success"onClick={this.onSubmitHandler.bind(this)} bsSize="large">Login</Button>
                     </FormGroup>
                     <p>New User? <Link to="/signup"> Signup</Link></p>
                 </form>
