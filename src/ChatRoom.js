@@ -1,25 +1,64 @@
 import React, {Component} from 'react';
+import ReactDOM from 'react-dom';
 import './App.css';
 import './Chat.css';
 import Header from "./Header";
-import {Form, FormControl, FormGroup, Button} from 'react-bootstrap';
+import {Form, FormControl, Button} from 'react-bootstrap';
 import {Redirect} from 'react-router-dom';
 import './Login';
+var firebase = require("firebase");
 
-var firebase = require('firebase');
 
 
 class ChatRoom extends Component {
 
     constructor(props) {
         super(props);
-
+        this.messagesRef = firebase.database().ref('chats/defaults');
         this.state = {
             newMsg: "",
             messages: []
+
         };
 
     }
+
+    getMessages() {
+
+        this.messagesRef.on('value', (snapshot) => {
+            let messages = snapshot.val();
+            let newMessages = [];
+            for(let messageKey in messages) {
+                newMessages.push({
+                    name: messages[messageKey].name,
+                    body: messages[messageKey].body,
+                });
+            }
+            this.setState({messages: newMessages});
+            this.scrollToBottom();
+        });
+
+
+    }
+
+    scrollToBottom() {
+        const node = ReactDOM.findDOMNode(this.refs.messagesEnd);
+        if (node) {
+            node.scrollIntoView({behavior: "smooth"});
+        }
+    }
+
+    componentDidMount() {
+        this.getMessages();
+        this.messagesRef.on('child_added', snapshot => {
+            let message = snapshot.val();
+            this.state.messages.push(message);
+            this.forceUpdate();
+            this.scrollToBottom();
+        });
+    }
+
+
 
     handleChange(e) {
         this.setState({[e.target.name]: e.target.value});
@@ -30,17 +69,18 @@ class ChatRoom extends Component {
             return;
         }
         var newMessage = {
-          name: "vidya",
+          name: firebase.auth().currentUser.displayName,
           body: this.state.newMsg
         };
-        this.state.messages.push(newMessage);
-        this.forceUpdate();
+        firebase.database().ref("chats/defaults").push(newMessage);
         this.setState({"newMsg": ""});
+        e.preventDefault();
+        this.scrollToBottom();
     }
 
 
     render() {
-        return (
+        return firebase.auth().currentUser ? (
             <div className="App">
                 <Header/>
                 <div class="container">
@@ -96,13 +136,17 @@ class ChatRoom extends Component {
                                             </li>);
 
                                         })}
+                                        <div style={{ float:"left", clear: "both" }}
+                                             ref="messagesEnd">
+                                        </div>
                                     </ul>
                                 </div>
                                 <div class="panel-footer">
                                     <div>
-                                        <Form inline>
+                                        <Form inline style={{width:"100%"}}>
                                                 <FormControl
                                                     id="btn-input"
+                                                    style={{width:"80%"}}
                                                     name="newMsg"
                                                     type="text"
                                                     placeholder="Type your message here..."
@@ -111,6 +155,7 @@ class ChatRoom extends Component {
                                                 </FormControl>
                                                     <Button
                                                         bsStyle="success"
+                                                        type="submit"
                                                         onClick={this.onSendHandler.bind(this)}
                                                         id="btn-chat">Send
                                                     </Button>
@@ -123,7 +168,7 @@ class ChatRoom extends Component {
                     </div>
                 </div>
             </div>
-        )
+        ) : (<Redirect to="/"/>);
     }
 }
 

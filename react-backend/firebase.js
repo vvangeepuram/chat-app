@@ -3,9 +3,8 @@ var firebase = require('firebase');
 
 var createUser = function(name, email, password, callback) {
     firebase.auth().createUserWithEmailAndPassword(email, password).then(user => {
-       var ref = firebase.database().ref("user/" + user.uid).set({
-           name: name,
-           email: email
+        user.updateProfile({
+            displayName: name
         });
        callback();
 
