@@ -36,7 +36,7 @@ class Login extends Component {
         firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then(user => {
             this.setState({redirectToChatRoom : true});
         }, err => {
-            alert ("Login failed. Please try agin");
+            alert ("Login failed. Please try again");
         });
     }
 

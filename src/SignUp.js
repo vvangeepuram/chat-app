@@ -4,6 +4,8 @@ import Header from "./Header";
 import {FormControl, FormGroup, Button} from 'react-bootstrap';
 import {Redirect} from 'react-router-dom';
 
+var firebase = require("firebase");
+
 
 class SignUp extends Component {
     constructor(props) {
@@ -13,7 +15,7 @@ class SignUp extends Component {
             email: '',
             password: '',
             confirmPassword: '',
-            redirectToLoginPage: false,
+            redirectToChatRoom: false,
         }
         this.handleChange = this.handleChange.bind(this);
     }
@@ -44,38 +46,24 @@ class SignUp extends Component {
 
     onSubmitHandler(e) {
         if (this.getNameValidationState() === "success" && this.getPasswordValidationState() === "success" &&
-                this.getEmailValidationState() === "success" && this.getConfirmPasswordValidationState() === "success") {
-            fetch('/createUser', {
-                method: 'post',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Accept': 'application/json'
-                },
-                body: `name=${this.state.name}&email=${this.state.email}&password=${this.state.password}`
-            }).then(res => {
-                res.json().then(resJson => {
-                    if (resJson.success) {
-                        this.setState({redirectToLoginPage : true});
-                    } else {
-                        alert(resJson.message);
-                    }
-                }, err => {
-                    alert("error occurred");
-                });
+            this.getEmailValidationState() === "success" && this.getConfirmPasswordValidationState() === "success") {
+            firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then(user => {
+                user.updateProfile({
+                    displayName: this.state.name
+                })
             }, err => {
-               alert("error occured");
-               console.log(err);
+                alert("error");
             });
 
         }
+        this.setState({redirectToChatRoom: true});
     }
-
 
 
 
     render() {
 
-        return(
+        return (
             <div className="App">
                 <Header/>
                 <form>
@@ -127,11 +115,12 @@ class SignUp extends Component {
                         </FormControl>
                     </FormGroup>
                     <FormGroup>
-                        <Button bsStyle="success" onClick={this.onSubmitHandler.bind(this)} bsSize="large">Signup</Button>
+                        <Button bsStyle="success" onClick={this.onSubmitHandler.bind(this)}
+                                bsSize="large">Signup</Button>
                     </FormGroup>
                     <p> Already have an account? <Link to="/">Login</Link></p>
                 </form>
-                {this.state.redirectToLoginPage && <Redirect to="/"/>}
+                {this.state.redirectToChatRoom && <Redirect to="/chatroom"/>}
             </div>
 
         )
