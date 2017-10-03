@@ -33,6 +33,7 @@ class Login extends Component {
     }
 
     onSubmitHandler(e) {
+        e.preventDefault();
         firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then(user => {
             this.setState({redirectToChatRoom : true});
         }, err => {
@@ -71,7 +72,7 @@ class Login extends Component {
                         </FormControl>
                     </FormGroup>
                     <FormGroup>
-                        <Button bsStyle="success"onClick={this.onSubmitHandler.bind(this)} bsSize="large">Login</Button>
+                        <Button bsStyle="success" type="submit" onClick={this.onSubmitHandler.bind(this)} bsSize="large">Login</Button>
                     </FormGroup>
                     <p>New User? <Link to="/signup"> Signup</Link></p>
                 </form>

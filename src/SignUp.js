@@ -45,6 +45,7 @@ class SignUp extends Component {
     }
 
     onSubmitHandler(e) {
+        e.preventDefault();
         if (this.getNameValidationState() === "success" && this.getPasswordValidationState() === "success" &&
             this.getEmailValidationState() === "success" && this.getConfirmPasswordValidationState() === "success") {
             firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then(user => {
@@ -115,7 +116,7 @@ class SignUp extends Component {
                         </FormControl>
                     </FormGroup>
                     <FormGroup>
-                        <Button bsStyle="success" onClick={this.onSubmitHandler.bind(this)}
+                        <Button bsStyle="success" onClick={this.onSubmitHandler.bind(this)} type="submit"
                                 bsSize="large">Signup</Button>
                     </FormGroup>
                     <p> Already have an account? <Link to="/">Login</Link></p>
